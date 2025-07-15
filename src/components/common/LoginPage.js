@@ -1,13 +1,17 @@
 
-import React, { useState } from 'react';
+import React, { useState, useNavigate } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
+import { useAuth } from '../../context/AuthContext';
+
 import './LoginPage.css';
 
 
 function Login() {
-  const [email, setEmail] = useState('');
+   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
 
   const validateForm = () => {
@@ -20,15 +24,23 @@ function Login() {
   };
 
 
-  const handleSubmit = (event) => {
+ const handleSubmit = async (event) => {
     event.preventDefault();
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
     } else {
       setErrors({});
-      console.log('Login attempted with:', { email, password });
-      // Here you would typically send a request to your server
+      try {
+        const userData = await login(email, password);
+
+
+        navigate('/profile');
+        console.log('Login successful:', userData);
+        // Here you would typically store the user data and redirect
+      } catch (error) {
+        setErrors({ form: 'Login failed. Please try again.' });
+      }
     }
   };
 

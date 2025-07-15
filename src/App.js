@@ -1,13 +1,15 @@
 
 import './App.css';
-import Navbar from './components/common/Navbar';
-import LoginPage from './components/common/LoginPage'
+import { AuthProvider } from './context/AuthContext';
+import Login from './components/common/LoginPage';
 
 function App() {
   return (
-    <>
-    <LoginPage/>
-    </>
+    <AuthProvider>
+      <div className="App">
+        <Login />
+      </div>
+    </AuthProvider>
     
   );
 }
