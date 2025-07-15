@@ -1,46 +1,81 @@
-import React, {useState} from "react";
-import './LoginPage.module.css';
+
+import React, { useState } from 'react';
+import { Form, Button, Alert } from 'react-bootstrap';
+import './LoginPage.css';
 
 
-function LoginPage (){
- const [email, setEmail] = useState('');
+function Login() {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState({});
 
-    const handleSubmit = (e) => {
-    e.preventDefault();
-    // Add your authentication logic here
-    console.log('Email:', email);
-    console.log('Password:', password);
+
+  const validateForm = () => {
+    const newErrors = {};
+    // if (!email) newErrors.email = 'Email is required';
+    // else if (!/S+@S+.S+/.test(email)) newErrors.email = 'Email is invalid';
+    if (!password) newErrors.password = 'Password is required';
+    else if (password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+    return newErrors;
   };
-    return(
-        <>
-        <div className="login-container">
-            <div className="login-image">
-               <img src="./login_image_girl_reading_book.jpg" alt="Logo" className="login-logo" width={250} height={250}/>
-            </div>
-            <div className="login-form">
-                 <form className="login-form" onSubmit={handleSubmit}>
-        <h2>Login</h2>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Sign In</button>
-      </form>
-            </div>
-        </div>
-        
-        </>
-    );
+
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+    } else {
+      setErrors({});
+      console.log('Login attempted with:', { email, password });
+      // Here you would typically send a request to your server
+    }
+  };
+
+
+  return (
+    <div className="login-wrapper">
+      <div className="login-form-container">
+        <h2 className="login-title">Login</h2>
+        <Form onSubmit={handleSubmit} className="login-form">
+          <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Label>Email address</Form.Label>
+            <Form.Control
+              type="email"
+              placeholder="Enter email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              isInvalid={!!errors.email}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.email}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+
+          <Form.Group className="mb-3" controlId="formBasicPassword">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              isInvalid={!!errors.password}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.password}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+
+          <Button variant="primary" type="submit" className="login-button">
+            Login
+          </Button>
+        </Form>
+      </div>
+    </div>
+  );
 }
-export default LoginPage;
+
+
+export default Login;
